@@ -5,6 +5,7 @@ import psycopg2
 if __name__ == "__main__":
     conn = psycopg2.connect(
         host="localhost",
+        # url=,
         # database="postgresql",
         user="testuser",
         password="pleaseletmein",

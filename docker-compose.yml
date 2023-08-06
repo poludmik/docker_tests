@@ -1,0 +1,12 @@
+services:
+   python_np:
+     container_name: python_np
+     stdin_open: true
+     ports:
+      - "3456:8080"
+     tty: true
+     build:
+      dockerfile: Dockerfile
+    
+
+      

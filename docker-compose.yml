@@ -1,12 +1,14 @@
 services:
-   python_np:
-     container_name: python_np
-     stdin_open: true
-     links: # look up
-      - db
-     tty: true
-     build:
+  python_np:
+    container_name: python_np
+    stdin_open: true
+    tty: true
+    build:
       dockerfile: Dockerfile
-    
+    networks:
+      - python-network
 
-      
+networks:
+  python-network:
+    name: backend_network
+    external: true

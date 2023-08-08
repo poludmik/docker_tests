@@ -35,11 +35,11 @@ if __name__ == "__main__":
         print(record)
     print()
 
-    # retrieve IDs and usernames of all users with username of length "username_len" AT ONCE
-    username_len = 4
-    cur.execute('SELECT acc.id, acc.username FROM user_account acc WHERE length(acc.first_name)=%s', (username_len,))
+    # retrieve IDs and usernames of all users with first name of length "first_name_len" AT ONCE
+    first_name_len = 4
+    cur.execute('SELECT acc.id, acc.username FROM user_account acc WHERE length(acc.first_name)=%s', (first_name_len,))
     # equals to cur.execute('SELECT acc.id, acc.username FROM user_account acc WHERE length(acc.first_name)=4')
-    print(f'Users with usernames of length {username_len}:')
+    print(f'Users with first name of length {first_name_len}:')
     print(cur.fetchall())
 
     cur.close()

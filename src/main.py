@@ -4,7 +4,7 @@ import psycopg2
 
 if __name__ == "__main__":
     db_connection_dict = {
-        'dbname': 'postgres',
+        'dbname': 'develop',
         'user': 'testuser',
         'password': 'pleaseletmein',
     }

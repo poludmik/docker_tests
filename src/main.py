@@ -2,6 +2,7 @@ import sys
 import numpy as np
 import psycopg2
 
+
 if __name__ == "__main__":
     db_connection_dict = {
         'dbname': 'develop',
@@ -22,32 +23,57 @@ if __name__ == "__main__":
     conn = psycopg2.connect(**db_connection_dict)
     cur = conn.cursor()
 
-    # db version
+
+    # Get db version
     cur.execute('SELECT version()')
     db_version = cur.fetchone()
     print(f'PostgreSQL database version: {db_version}')
     print()
 
-    # retrieve all users ONE BY ONE
-    cur.execute('SELECT * FROM user_account')
-    print('All users:')
+
+    # Select all users
+    cur.execute("select * from user_account where first_name = 'Egor' limit 1")
     for record in cur:
         print(record)
-    print()
 
-    # retrieve IDs and usernames of all users with first name of length "first_name_len" AT ONCE
-    first_name_len = 4
-    cur.execute('SELECT acc.id, acc.username FROM user_account acc WHERE length(acc.first_name)=%s', (first_name_len,))
-    # equals to cur.execute('SELECT acc.id, acc.username FROM user_account acc WHERE length(acc.first_name)=4')
-    print(f'Users with first name of length {first_name_len}:')
-    print(cur.fetchall())
 
+    # Select IDs and usernames of all users with first name of length "first_name_len" AT ONCE
+    cur.execute("SELECT date_of_birth, username FROM user_account WHERE length(first_name)=%s AND last_name=%s", (4, "Menshikov"))
+    print("\n", cur.fetchall())
+
+
+    # Delete row
+    prefix_to_delete = 'hungry_joakimbroden'
+    cur.execute(f"DELETE FROM username_prefix WHERE prefix = '{prefix_to_delete}'")
+
+
+    # Insert row
+    prefix_to_insert = 'hungry_mccartney'
+    cur.execute(f"INSERT INTO username_prefix (prefix) VALUES ('{prefix_to_insert}') ON CONFLICT (prefix) DO NOTHING;")
+
+
+    # Insert and update row
+    values = ('afb73dd5-f1de-4b37-86cc-9e177b04c7db', 
+              '2024-01-01', 
+              'kek@mydlo.com', 
+              'Kolya', 
+              '$2a$10$5sLlVP8g6pW9GGx3eyw7I.KjosvIXfD.z1pZ2eHyrt8MTN16oN5PW', 
+              'Denisov', 
+              'USER', 
+              '2020-01-21 18:14:00.111111', 
+              'kek',
+              )
+    cur.execute(f"DELETE FROM user_account WHERE username = 'kek'") # delete if existed...
+    cur.execute("INSERT INTO user_account VALUES %s", (values, ))
+    cur.execute(f"UPDATE user_account SET email = 'oPrivet@kolya.com' WHERE username = 'kek'")
+
+
+    # Close cursor
     cur.close()
 
-    # don't forget to close the connection too!!!!!!
-    conn.close()
+    # Commit db: save DELETEs and INSERTs
+    conn.commit()
 
-    # while(True):
-    #     print("where number")
-    #     n = int(input())
-    #     print(np.random.rand(1, n))
+    # don't forget to close the connection too!!!!!!
+    # >:)
+    conn.close()

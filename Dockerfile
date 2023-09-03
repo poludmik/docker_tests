@@ -9,4 +9,11 @@ WORKDIR /folder
 
 RUN pip3 install -r requirements.txt
 
-ENTRYPOINT ["python3", "src/main.py", "-docker"]
+# ENTRYPOINT ["python3", "src/db_tests.py", "-docker"]
+ENTRYPOINT ["python3", "src/app.py"]
+
+
+
+# RUN CONTAINER:
+# docker compose build —no-cache
+# docker compose up

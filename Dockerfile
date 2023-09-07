@@ -7,13 +7,15 @@ FROM python:latest
 COPY . /folder
 WORKDIR /folder
 
+# for linux
+RUN pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 RUN pip3 install -r requirements.txt
 
 # ENTRYPOINT ["python3", "src/db_tests.py", "-docker"]
-ENTRYPOINT ["python3", "src/app.py"]
-
+# ENTRYPOINT ["python3", "src/app.py"]
+ENTRYPOINT [ "python3",  "src/nlp/process_search.py"]
 
 
 # RUN CONTAINER:
-# docker compose build —no-cache
+# docker compose build --no-cache
 # docker compose up

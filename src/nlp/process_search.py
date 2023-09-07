@@ -79,4 +79,3 @@ if __name__ == "__main__":
     print('\x1b[1;34m' + "Asked for: " + '\x1b[0m' + f"'{user_request}'")
     print('\x1b[1;34m' + "Extracted keywords: " + '\x1b[0m' + f"{res}")
     
-

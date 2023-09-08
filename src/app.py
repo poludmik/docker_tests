@@ -5,7 +5,7 @@ from nlp.process_search import ProcessSearch
 app = Flask(__name__)
 
 
-@app.route('/process_string', methods=['POST'])
+@app.route('/process_string', methods=['GET'])
 def process_string():
     try:
         received_data = request.get_json()
@@ -20,7 +20,7 @@ def process_string():
         return jsonify({'error': str(e)}), 500
     
 
-@app.route('/extract_keywords', methods=['POST'])
+@app.route('/extract_keywords', methods=['GET'])
 def extract_keywords():
     try:
         received_data = request.get_json()

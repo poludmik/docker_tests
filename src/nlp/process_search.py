@@ -7,6 +7,8 @@ from sentence_transformers import SentenceTransformer
 import numpy as np
 import torch
 import re
+from typing import List
+
 
 nltk.download('stopwords') # set of stop words
 nltk.download('wordnet') # lemmatizer
@@ -33,7 +35,7 @@ class ProcessSearch():
     pos_excluded = ["MD", "VB", "VBP", "VBN", "VBZ", "VBG", "VBD", "RB", "CC", "WRB"] 
     
     @staticmethod
-    def get_keywords(sentence: str, keyword_list: list[str]) -> list[str]:
+    def get_keywords(sentence: str, keyword_list: List[str]) -> List[str]:
 
         # Remove punctuation and trailing chars, lowercase and split
         tokens_list = re.sub(r'[^\w\s]','', sentence).rstrip().lower().split()

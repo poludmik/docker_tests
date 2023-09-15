@@ -43,4 +43,12 @@ def extract_keywords():
 
 
 if __name__ == '__main__':
+
+    import sys
+    print(sys.version)
+
+    import torch
+    device = "cuda:0" if torch.cuda.is_available() else "cpu"
+    print(device)
+
     app.run(host='0.0.0.0', port=5000, debug=True)

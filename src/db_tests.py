@@ -13,12 +13,10 @@ if __name__ == "__main__":
     if len(sys.argv) == 2 and sys.argv[1] == '-docker':
         # this script was run from docker
         db_connection_dict['host'] = 'db'
-        pass
     else:
         # this script was run locally
         db_connection_dict['host'] = 'localhost'
         db_connection_dict['port'] = 5432
-        pass
 
     conn = psycopg2.connect(**db_connection_dict)
     cur = conn.cursor()

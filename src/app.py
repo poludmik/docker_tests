@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
-from nlp.process_search import ProcessSearch
+from src.nlp.process_search import ProcessSearch
+from src.data.data import Data
 
 
 app = Flask(__name__)
@@ -27,14 +28,9 @@ def extract_keywords():
 
         if 'user_request' not in received_data:
             return jsonify({'error': 'Missing user_request string in the request'}), 400
-        
-        # Get a list of available keywords somehow TODO
-        keywords = ["sushi", "pizza", "burger", "japanese", "italian", "seafood", 
-                    "cheap", "fastfood", "meat", "steak", "fish", "chips", "spaghetti",
-                    "american", "wine", "coctail", "russian", "tortilla", "coffee", "capuccino",
-                    "breakfast", "dinner", "chinese", "schnitzel", "pirogi", "czech"]
 
-        response_data = {"keywords": ProcessSearch.get_keywords(received_data['user_request'], keywords)}
+        print(received_data['user_request'])
+        response_data = {"keywords": ProcessSearch.get_keywords(received_data['user_request'], data)}
 
         return jsonify(response_data)
     
@@ -42,13 +38,19 @@ def extract_keywords():
         return jsonify({'error': str(e)}), 500
 
 
-if __name__ == '__main__':
+def start(docker=False):
+    global data
+    data = Data(docker=docker)
+    app.run(host='0.0.0.0', port=5000, debug=False)
 
-    import sys
-    print(sys.version)
 
-    import torch
-    device = "cuda:0" if torch.cuda.is_available() else "cpu"
-    print(device)
+# if __name__ == '__main__':
+#     import sys
+#     print("Python version:", sys.version)
 
-    app.run(host='0.0.0.0', port=5000, debug=True)
+#     args = parser.parse_args([] if "__file__" not in globals() else None)
+
+#     global data
+#     data = Data(docker=args.docker)
+
+#     app.run(host='0.0.0.0', port=5000, debug=True)

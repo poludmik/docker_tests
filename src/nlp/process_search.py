@@ -3,11 +3,12 @@ import nltk
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 from nltk.metrics import distance
-from sentence_transformers import SentenceTransformer
+from nltk import ngrams
 import numpy as np
-import torch
 import re
 from typing import List
+from src.data.data import Data
+from src.nlp.embeddings import Embeddings
 
 
 nltk.download('stopwords') # set of stop words
@@ -22,20 +23,18 @@ class Pair:
     def __repr__(self):
         return f"{self.query_w}-{self.matched_w}"
 
-
 class ProcessSearch():
 
     lemmatizer = WordNetLemmatizer()
     stop_words = set(stopwords.words('english'))
-    device = "cuda:0" if torch.cuda.is_available() else "cpu"
-    print(device)
-    gte_model = SentenceTransformer('thenlper/gte-base', device=device)
+
+    model = Embeddings()
 
     # https://www.guru99.com/pos-tagging-chunking-nltk.html
     pos_excluded = ["MD", "VB", "VBP", "VBN", "VBZ", "VBG", "VBD", "RB", "CC", "WRB"] 
     
     @staticmethod
-    def get_keywords(sentence: str, keyword_list: List[str]) -> List[str]:
+    def get_keywords(sentence: str, data: Data) -> List[str]:
 
         # Remove punctuation and trailing chars, lowercase and split
         tokens_list = re.sub(r'[^\w\s]','', sentence).rstrip().lower().split()
@@ -49,26 +48,47 @@ class ProcessSearch():
         words = [w for w in words if w not in ProcessSearch.stop_words]
 
         words = [ProcessSearch.lemmatizer.lemmatize(w) for w in words]
-        
-        res_pairs = []
-        for w in words:
-            for kw in keyword_list:
-                # Either differ in at most max_difference chars or embeddings cosine similarity is close to 1 (pasta-spaghetti)
-                if ProcessSearch.__compare_levenshtein(w, kw) or ProcessSearch.__compare_with_gte(w, kw, 0.9):
-                    res_pairs.append(Pair(w, kw))
-        print(res_pairs, end="\n\n")
 
-        return [p.matched_w for p in res_pairs]
+        # also take 2-grams
+        ngram_list = []
+        for ng in ngrams(words, 2):
+            ngram_list.append(' '.join(ng))
+        words += ngram_list
 
+        w_embs = np.array([ProcessSearch.model.get_sentence_embedding(t) for t in words])
+
+        sim_threshold = 0.88
+        multiplied = w_embs @ data.keywords_embeddings.T
+        print(multiplied.shape)
+
+        # # Only for logs and tests
+        # idxs_request_similarity = np.max(multiplied, axis=1) >= sim_threshold
+        # res_req = np.array(words)[idxs_request_similarity].tolist()
+        # print(f"Similar from request list: {res_req}")
+
+        idxs_keyword_similarity = np.max(multiplied, axis=0) >= sim_threshold
+        res = data.keywords[idxs_keyword_similarity].tolist()
+        print(f"Similar from filters list: {res}")
+
+        # res_pairs = []
+        # for w in words:
+        #     for kw in data.keywords:
+        #         if kw not in res and ProcessSearch.__compare_levenshtein(w, kw) and ProcessSearch.__compare_with_embs(w, kw):
+        #             res.append(kw)
+        #             res_pairs.append(Pair(w, kw))
+        # print(res_pairs, end="\n\n")
+
+        return res
+    
     @staticmethod
     def __compare_levenshtein(w1: str, w2: str, max_difference: int = 2) -> bool:
         return distance.edit_distance(w1, w2) <= max_difference
     
     @staticmethod
-    def __compare_with_gte(w1: str, w2: str, sim_threshold: int = 0.85) -> bool:
-        emb1 = ProcessSearch.gte_model.encode(w1)
-        emb2 = ProcessSearch.gte_model.encode(w2)
-        return (emb1 @ emb2) / (np.linalg.norm(emb1) * np.linalg.norm(emb2)) > sim_threshold
+    def __compare_with_embs(w1: str, w2: str, sim_threshold: int = 0.8) -> bool:
+        emb1 = ProcessSearch.model.get_sentence_embedding(w1)
+        emb2 = ProcessSearch.model.get_sentence_embedding(w2)
+        return (emb1 @ emb2) / (np.linalg.norm(emb1) * np.linalg.norm(emb2)) >= sim_threshold
 
 
 if __name__ == "__main__":

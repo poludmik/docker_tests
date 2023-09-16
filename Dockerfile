@@ -60,7 +60,7 @@
 
 
 # FROM ubuntu:22.04
-FROM python:latest
+FROM python:3.10
 
 # RUN apt-get -y update
 # RUN apt-get -y install software-properties-common
@@ -76,7 +76,8 @@ RUN pip3 install torch torchvision torchaudio --index-url https://download.pytor
 RUN pip3 install -r requirements.txt
 
 # ENTRYPOINT ["python3", "src/db_tests.py", "-docker"]
-ENTRYPOINT ["python3", "src/app.py"]
+# ENTRYPOINT ["python3", "src/app.py", "--docker"]
+ENTRYPOINT ["python3", "-m", "src", "--docker"]
 # ENTRYPOINT [ "python3",  "src/nlp/process_search.py"]
 
 

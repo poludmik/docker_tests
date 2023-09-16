@@ -87,6 +87,11 @@ class ProcessSearch():
         print(res_pairs, end="\n\n")
 
         return res, [t for t in exclude if t in res]
+    
+    @staticmethod
+    def autocomplete_search(text: str) -> str:
+        pass
+
 
     @staticmethod
     def __compare_levenshtein(w1: str, w2: str, max_difference: int = 1) -> bool:

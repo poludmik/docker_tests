@@ -33,11 +33,18 @@ class ProcessSearch():
     # https://www.guru99.com/pos-tagging-chunking-nltk.html
     pos_excluded = ["MD", "VB", "VBP", "VBN", "VBZ", "VBG", "VBD", "RB", "CC", "WRB"] 
     
+    negations = ["no", "without", "except"] 
+
     @staticmethod
     def get_keywords(sentence: str, data: Data) -> List[str]:
 
         # Remove punctuation and trailing chars, lowercase and split
         tokens_list = re.sub(r'[^\w\s]','', sentence).rstrip().lower().split()
+
+        exclude = []
+        for i in range(len(tokens_list) - 1):
+            if tokens_list[i] in ProcessSearch.negations:
+                exclude.append(ProcessSearch.lemmatizer.lemmatize(tokens_list[i+1]))
 
         # Remove verbs and useless part-of-speeches
         pos = nltk.pos_tag(tokens_list)
@@ -71,18 +78,18 @@ class ProcessSearch():
         res = data.keywords[idxs_keyword_similarity].tolist()
         print(f"Similar from filters list: {res}")
 
-        # res_pairs = []
-        # for w in words:
-        #     for kw in data.keywords:
-        #         if kw not in res and ProcessSearch.__compare_levenshtein(w, kw) and ProcessSearch.__compare_with_embs(w, kw):
-        #             res.append(kw)
-        #             res_pairs.append(Pair(w, kw))
-        # print(res_pairs, end="\n\n")
+        res_pairs = []
+        for w in words:
+            for kw in data.keywords:
+                if kw not in res and ProcessSearch.__compare_levenshtein(w, kw):
+                    res.append(kw)
+                    res_pairs.append(Pair(w, kw))
+        print(res_pairs, end="\n\n")
 
-        return res
+        return res, [t for t in exclude if t in res]
 
     @staticmethod
-    def __compare_levenshtein(w1: str, w2: str, max_difference: int = 2) -> bool:
+    def __compare_levenshtein(w1: str, w2: str, max_difference: int = 1) -> bool:
         return distance.edit_distance(w1, w2) <= max_difference
     
     @staticmethod

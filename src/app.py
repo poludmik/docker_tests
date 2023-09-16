@@ -30,7 +30,8 @@ def extract_keywords():
             return jsonify({'error': 'Missing user_request string in the request'}), 400
 
         print(received_data['user_request'])
-        response_data = {"keywords": ProcessSearch.get_keywords(received_data['user_request'], data)}
+        filters, filters_to_exclude = ProcessSearch.get_keywords(received_data['user_request'], data)
+        response_data = {"filters": filters, "filters_to_exclude": filters_to_exclude}
 
         return jsonify(response_data)
     

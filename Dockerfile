@@ -83,4 +83,4 @@ ENTRYPOINT ["python3", "-m", "src", "--docker"]
 
 # RUN CONTAINER:
 # docker compose build --no-cache
-# docker compose up
+# docker compose up -d

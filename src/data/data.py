@@ -6,7 +6,6 @@ from src.nlp.embeddings import Embeddings
 class Data:
 
     def __init__(self, docker=False) -> None:
-        
         self.keywords, self.keywords_embeddings = Data.update_keywords_embeddings(docker=docker)
         print(f"Total of {self.keywords_embeddings.shape[0]} filters")
     

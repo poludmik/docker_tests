@@ -56,7 +56,8 @@ class ProcessSearch():
         words += ngram_list
 
         w_embs = np.array([ProcessSearch.model.get_sentence_embedding(t) for t in words])
-
+        print(w_embs.shape)
+        print(data.keywords_embeddings.T.shape)
         sim_threshold = 0.88
         multiplied = w_embs @ data.keywords_embeddings.T
         print(multiplied.shape)
@@ -79,7 +80,7 @@ class ProcessSearch():
         # print(res_pairs, end="\n\n")
 
         return res
-    
+
     @staticmethod
     def __compare_levenshtein(w1: str, w2: str, max_difference: int = 2) -> bool:
         return distance.edit_distance(w1, w2) <= max_difference

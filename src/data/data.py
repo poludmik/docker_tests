@@ -1,9 +1,7 @@
 import numpy as np
-import psycopg2
 from src.nlp.embeddings import Embeddings
 from src.nlp.autocomplete import Autocomplete
 import src.data.db_connection as db
-# from src.data.db_connection import get_db
 
 
 class Data:
@@ -16,10 +14,7 @@ class Data:
 
     @staticmethod
     def update_keywords_embeddings(docker: bool) -> np.ndarray:
-        # cur = get_db().cursor()
-        print("here at least")
         cur = db.conn.cursor()
-
         cur.execute("SELECT name FROM filter_parameter")
         filters_list = [f[0] for f in list(cur.fetchall())]
         print(filters_list)

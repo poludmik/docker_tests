@@ -1,12 +1,8 @@
-import os
 from flask import Flask, request, jsonify, g
 from src.nlp.process_search import ProcessSearch
 from src.data.data import Data
-# from src.data.db_connection import DBconnection as db
 import src.data.db_connection as db
-# from src.data.db_connection import get_db
-# import psycopg2
-import atexit
+import signal
 
 
 app = Flask(__name__)
@@ -36,7 +32,6 @@ def process_string():
 @app.route('/extract_keywords', methods=['GET'])
 def extract_keywords():
     try:
-
         data = check_data()
 
         received_data = request.get_json()
@@ -54,21 +49,15 @@ def extract_keywords():
         return jsonify({'error': str(e)}), 500
 
 
-def close_db():
-    db.conn.close()
-    if db.conn.closed:
-        print("DB CONNECTION CLOSED")
-    else:
-        print("DB CONNECTION WASN'T CLOSED")
-
-
-atexit.register(close_db)
+# Close connection to DB on:
+signal.signal(signal.SIGTERM, db.DBconnection.close_db_docker) # docker stop
+# signal.signal(signal.SIGHUP, db.DBconnection.close_db_docker)
+signal.signal(signal.SIGINT, db.DBconnection.close_db_docker) # CTRL+C
 
 
 def start():
     global data
     data = None
-
     db.DBconnection.connect()
     app.run(host='0.0.0.0', port=5000, debug=False)
 

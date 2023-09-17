@@ -1,6 +1,6 @@
 import numpy as np
 import src.data.db_connection as db
-
+from nltk.corpus import words
 
 class Autocomplete:
     # ---------------- Dictionary representation -----------------
@@ -91,27 +91,19 @@ class Autocomplete:
         self.count_matrix = self.__get_count_bigram_matrix(self.text, self.word2idx, smoothing=False)
         self.bigram_matrix = self.__count_matrix_to_bigram_matrix(self.count_matrix)
 
-    def __modify_prev_word(self, prev_word: str):
-        if prev_word not in self.word2idx:
-            if prev_word.lower() in self.word2idx:
-                prev_word = prev_word.lower()
-            else:
-                prev_word = "<UNK>"
-        return prev_word
-
     def sample_next_word(self, prev_word: str):
-        prev_word = self.__modify_prev_word(prev_word)
+        prev_word = self.__check_prev_word(prev_word)
         return self.idx2word[np.random.choice(len(self.word2idx), 1, p=self.bigram_matrix[self.word2idx[prev_word]])[0]]
     
     def sample_top_n_words(self, prev_word: str, N: int): # non zero values only (e.g. exclude "<UNK>")
-        prev_word = self.__modify_prev_word(prev_word)
+        prev_word = self.__check_prev_word(prev_word)
         arr = self.bigram_matrix[self.word2idx[prev_word]][:-1]
         ind = arr.argsort()
         return [self.idx2word[i] for i in ind[arr[ind] != 0.0]][::-1][:N]
 
-    def sample_sentence(self, max_len: int = 7):
+    def sample_sentence(self, w0: str = "<s>", max_len: int = 7):
         sentence = []
-        w0 = '<s>'
+        w0 = "<s>"
         while True:
             if len(sentence) >= max_len:
                 break
@@ -126,11 +118,24 @@ class Autocomplete:
             w0 = w1
         return ' '.join(sentence)
 
-    def autocomplete_sentence(self, sentence: str, max_length: int = 7) -> str:
-        last_word = sentence.translate(self.translation_table).rstrip().split()[-1]
+    def autocomplete_sentence(self, sentence: str, max_length: int = 7) -> tuple[str, list[str]]:
+        tokens = sentence.translate(self.translation_table).rstrip().split()
+        last_word = tokens[-1]
         print(f"last_word >>{last_word}<<")
 
+        # if last_word in db or last_word in words.words():
+        #     # last word is complete
+        #     return sentence + " " + sample_sentence(w0=last_word, max_len=max_length-len(tokens))
+        # else:
+        #     # complete the word if possible and complete sentence with this word
 
+    def __check_prev_word(self, prev_word: str):
+        if prev_word not in self.word2idx:
+            if prev_word.lower() in self.word2idx:
+                prev_word = prev_word.lower()
+            else:
+                prev_word = "<UNK>"
+        return prev_word
 
     @staticmethod
     def __get_word2idx(text: str) -> dict[str, int]:

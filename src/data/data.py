@@ -1,14 +1,17 @@
 import numpy as np
 import psycopg2
 from src.nlp.embeddings import Embeddings
+from src.nlp.autocomplete import Autocomplete
 
 
 class Data:
 
     def __init__(self, docker=False) -> None:
-        self.keywords, self.keywords_embeddings = Data.update_keywords_embeddings(docker=docker)
-        print(f"Total of {self.keywords_embeddings.shape[0]} filters")
-    
+        # self.keywords, self.keywords_embeddings = Data.update_keywords_embeddings(docker=docker)
+        # print(f"Total of {self.keywords_embeddings.shape[0]} filters")
+        # Autocomplete.get_n_gram_probabilities('src/data/searches.txt')
+        self.autocomplete = Autocomplete("src/data/searches.txt")
+
     @staticmethod
     def update_keywords_embeddings(docker: bool) -> np.ndarray:
         print("Creating embeddings matrix from each filter/keyword...")
@@ -34,4 +37,3 @@ class Data:
         model = Embeddings()
         
         return np.array(filters_list), np.array([model.get_sentence_embedding(f) for f in filters_list])
-        

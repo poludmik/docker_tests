@@ -69,7 +69,7 @@ class ProcessSearch():
         multiplied = w_embs @ data.keywords_embeddings.T
         print(multiplied.shape)
 
-        # # Only for logs and tests
+        # # Only for logs and tests. What query words were selected.
         # idxs_request_similarity = np.max(multiplied, axis=1) >= sim_threshold
         # res_req = np.array(words)[idxs_request_similarity].tolist()
         # print(f"Similar from request list: {res_req}")
@@ -92,7 +92,6 @@ class ProcessSearch():
     def autocomplete_search(text: str) -> str:
         pass
 
-
     @staticmethod
     def __compare_levenshtein(w1: str, w2: str, max_difference: int = 1) -> bool:
         return distance.edit_distance(w1, w2) <= max_difference
@@ -104,13 +103,9 @@ class ProcessSearch():
         return (emb1 @ emb2) / (np.linalg.norm(emb1) * np.linalg.norm(emb2)) >= sim_threshold
 
 
-if __name__ == "__main__":
-    user_request = "I want Japnse foods for a cheap price, maybe sushi with fish or pasta"
-    keywords = ["sushi", "pizza", "burger", "japanese", "italian", "seafood", 
-                                             "cheap", "fastfood", "meat", "steak", "fish", "chips", "spaghetti",
-                                             "american", "wine", "coctail", "russian", "tortilla", "coffee", "capuccino",
-                                             "breakfast", "dinner", "chinese", "schnitzel", "pirogi", "czech"]
-    res = ProcessSearch.get_keywords(sentence=user_request, keyword_list=keywords)
-    print('\x1b[1;34m' + "Asked for: " + '\x1b[0m' + f"'{user_request}'")
-    print('\x1b[1;34m' + "Extracted keywords: " + '\x1b[0m' + f"{res}")
+
+# if __name__ == "__main__":
+#     res = ProcessSearch.get_keywords(sentence=user_request, keyword_list=keywords)
+#     print('\x1b[1;34m' + "Asked for: " + '\x1b[0m' + f"'{user_request}'")
+#     print('\x1b[1;34m' + "Extracted keywords: " + '\x1b[0m' + f"{res}")
     

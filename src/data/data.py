@@ -2,38 +2,27 @@ import numpy as np
 import psycopg2
 from src.nlp.embeddings import Embeddings
 from src.nlp.autocomplete import Autocomplete
+import src.data.db_connection as db
+# from src.data.db_connection import get_db
 
 
 class Data:
 
     def __init__(self, docker=False) -> None:
-        # self.keywords, self.keywords_embeddings = Data.update_keywords_embeddings(docker=docker)
+        self.keywords, self.keywords_embeddings = Data.update_keywords_embeddings(docker=docker)
         # print(f"Total of {self.keywords_embeddings.shape[0]} filters")
-        # Autocomplete.get_n_gram_probabilities('src/data/searches.txt')
+
         self.autocomplete = Autocomplete("src/data/searches.txt")
 
     @staticmethod
     def update_keywords_embeddings(docker: bool) -> np.ndarray:
-        print("Creating embeddings matrix from each filter/keyword...")
+        # cur = get_db().cursor()
+        print("here at least")
+        cur = db.conn.cursor()
 
-        db_connection_dict = {
-            'dbname': 'develop',
-            'user': 'testuser',
-            'password': 'pleaseletmein',
-        }
-
-        if docker:
-            db_connection_dict['host'] = 'db'
-        else:
-            db_connection_dict['host'] = 'localhost'
-            db_connection_dict['port'] = 5432
-
-        conn = psycopg2.connect(**db_connection_dict)
-        cur = conn.cursor()
         cur.execute("SELECT name FROM filter_parameter")
-
         filters_list = [f[0] for f in list(cur.fetchall())]
-
+        print(filters_list)
+        cur.close()
         model = Embeddings()
-        
         return np.array(filters_list), np.array([model.get_sentence_embedding(f) for f in filters_list])

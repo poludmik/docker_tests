@@ -68,6 +68,8 @@ FROM python:3.10
 # RUN apt install -y python3.10
 # RUN apt-get install -y python3-pip
 
+ENV AM_I_IN_A_DOCKER_CONTAINER Yes
+
 COPY . /folder
 WORKDIR /folder
 
@@ -77,7 +79,8 @@ RUN pip3 install -r requirements.txt
 
 # ENTRYPOINT ["python3", "src/db_tests.py", "-docker"]
 # ENTRYPOINT ["python3", "src/app.py", "--docker"]
-ENTRYPOINT ["python3", "-m", "src", "--docker"]
+# ENTRYPOINT ["python3", "-m", "src", "--docker"]
+ENTRYPOINT ["python3", "-m", "src"]
 # ENTRYPOINT [ "python3",  "src/nlp/process_search.py"]
 
 

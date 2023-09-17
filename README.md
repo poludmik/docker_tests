@@ -9,3 +9,5 @@
 ```console
 docker run --rm -it --gpus=all nvcr.io/nvidia/k8s/cuda-sample:nbody nbody -gpu -benchmark
 ```
+
+* If docker can't find some credentials on WSL, then nano ~/.docker/config.json and chacnge creds to cred

@@ -1,6 +1,5 @@
-import re
 import numpy as np
-from dataclasses import dataclass
+import src.data.db_connection as db
 
 
 class Autocomplete:
@@ -82,10 +81,10 @@ class Autocomplete:
     def __init__(self, corpus_file_name: str):
         input_file_name = corpus_file_name
         changed_file_name = corpus_file_name.replace('.txt', '_modified') + ".txt"
+        self.translation_table = str.maketrans('', '', '.,')
         with open(input_file_name, "r") as input_file, open(changed_file_name, "w") as output_file:
-            translation_table = str.maketrans('', '', '.,')
             for line in input_file:
-                tokens = line.translate(translation_table).rstrip().split()
+                tokens = line.translate(self.translation_table).rstrip().split()
                 output_file.write(' '.join(tokens) + '\n')
         self.text = changed_file_name
         self.word2idx, self.idx2word = self.__get_word2idx(self.text)
@@ -126,6 +125,12 @@ class Autocomplete:
             sentence.append(w1)
             w0 = w1
         return ' '.join(sentence)
+
+    def autocomplete_sentence(self, sentence: str, max_length: int = 7) -> str:
+        last_word = sentence.translate(self.translation_table).rstrip().split()[-1]
+        print(f"last_word >>{last_word}<<")
+
+
 
     @staticmethod
     def __get_word2idx(text: str) -> dict[str, int]:
@@ -187,8 +192,9 @@ class Autocomplete:
 
 if __name__ == "__main__":
     autocomplete = Autocomplete("src/data/searches.txt")
-    for _ in range(5):
-        print(autocomplete.sample_sentence(7))
+    # for _ in range(5):
+    #     print(autocomplete.sample_sentence(7))
 
-    print(autocomplete.sample_top_n_words("I", 5))
+    # print(autocomplete.sample_top_n_words("I", 5))
     
+    print(autocomplete.autocomplete_sentence("I want an American "))

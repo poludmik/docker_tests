@@ -1,9 +1,21 @@
-from flask import Flask, request, jsonify
+import os
+from flask import Flask, request, jsonify, g
 from src.nlp.process_search import ProcessSearch
 from src.data.data import Data
+# from src.data.db_connection import DBconnection as db
+import src.data.db_connection as db
+# from src.data.db_connection import get_db
+# import psycopg2
+import atexit
 
 
 app = Flask(__name__)
+
+def check_data():
+    global data
+    if data is None:
+        data = Data()
+    return data
 
 
 @app.route('/process_string', methods=['GET'])
@@ -24,6 +36,9 @@ def process_string():
 @app.route('/extract_keywords', methods=['GET'])
 def extract_keywords():
     try:
+
+        data = check_data()
+
         received_data = request.get_json()
 
         if 'user_request' not in received_data:
@@ -39,19 +54,21 @@ def extract_keywords():
         return jsonify({'error': str(e)}), 500
 
 
-def start(docker=False):
+def close_db():
+    db.conn.close()
+    if db.conn.closed:
+        print("DB CONNECTION CLOSED")
+    else:
+        print("DB CONNECTION WASN'T CLOSED")
+
+
+atexit.register(close_db)
+
+
+def start():
     global data
-    data = Data(docker=docker)
+    data = None
+
+    db.DBconnection.connect()
     app.run(host='0.0.0.0', port=5000, debug=False)
 
-
-# if __name__ == '__main__':
-#     import sys
-#     print("Python version:", sys.version)
-
-#     args = parser.parse_args([] if "__file__" not in globals() else None)
-
-#     global data
-#     data = Data(docker=args.docker)
-
-#     app.run(host='0.0.0.0', port=5000, debug=True)

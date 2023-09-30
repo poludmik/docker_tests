@@ -91,6 +91,7 @@ class Autocomplete:
         self.word2idx, self.idx2word = self.__get_word2idx(self.text)
         self.count_matrix = self.__get_count_bigram_matrix(self.text, self.word2idx, smoothing=False)
         self.bigram_matrix = self.__count_matrix_to_bigram_matrix(self.count_matrix)
+        self.spec_symbols = set(["<s>", "</s>", "<UNK>"])
 
     def sample_next_word(self, prev_word: str):
         # return self.idx2word[np.argmax(self.bigram_matrix[self.word2idx[prev_word]])]
@@ -98,6 +99,7 @@ class Autocomplete:
         return self.idx2word[np.random.choice(len(self.word2idx), 1, p=self.bigram_matrix[self.word2idx[prev_word]])[0]]
     
     def sample_top_n_words(self, prev_word: str, N: int): # non zero values only (e.g. exclude "<UNK>")
+        # TODO, will still generate </s>
         prev_word = self.__check_prev_word(prev_word)
         arr = self.bigram_matrix[self.word2idx[prev_word]][:-1]
         ind = arr.argsort()
@@ -105,10 +107,10 @@ class Autocomplete:
     
     def sample_n_next_words(self, prev_word: str, N: int):
         prev_word = self.__check_prev_word(prev_word)
-        return [self.idx2word[w] for w in np.random.choice(len(self.word2idx), N, p=self.bigram_matrix[self.word2idx[prev_word]]).tolist()]
+        N = min(N, np.sum(self.bigram_matrix[self.word2idx[prev_word]] > 0))
+        return [self.idx2word[w] for w in np.random.choice(len(self.word2idx), N, p=self.bigram_matrix[self.word2idx[prev_word]], replace=False).tolist() if self.idx2word[w] not in self.spec_symbols]
 
     def autocomplete_list_of_tokens(self, tokens: list[str], max_len: int = 7) -> str:
-        print(tokens)
         if len(tokens) > 0:
             w0 = tokens[-1]
         else:
@@ -129,33 +131,43 @@ class Autocomplete:
         ridiculous_sent_completion = ''
 
         # User has inserted char that is not a letter (previous word finished)
-        if not sentence[-1].isalpha():
-            next_words = self.sample_n_next_words(prev_word=last_word, N=N_proposed_words)
-            ridiculous_sent_completion = self.autocomplete_list_of_tokens(tokens + [next_words[0]], max_len=max_length)
-        else: # Last char is a letter
+        if sentence[-1].isalpha():
             cur = db.conn.cursor()
             cur.execute(f"SELECT name from filter_parameter WHERE search_tsv @@ to_tsquery('simple', '{last_word}:*');")
             possible_words_after_completion = list(w[0] for w in cur.fetchall())
             cur.close()
 
-            print(possible_words_after_completion)
+            print("Words from DB:", possible_words_after_completion)
 
-            if len(possible_words_after_completion) > 0:
-                if last_word in possible_words_after_completion or last_word.lower() in possible_words_after_completion: # finished word, insert ' ' and complete
+            # However, doesn't search if it is an unfinished word like 'plat' (plate)
+            is_in_word2idx = last_word in self.word2idx or last_word.lower() in self.word2idx
+
+            if len(possible_words_after_completion) > 0 or is_in_word2idx:
+                if is_in_word2idx or last_word in possible_words_after_completion or last_word.lower() in possible_words_after_completion: # Finished word, insert ' ' and complete
+                    print("Finished word!")
                     next_words = self.sample_n_next_words(prev_word=last_word, N=N_proposed_words)
                     ridiculous_sent_completion = self.autocomplete_list_of_tokens(tokens + [next_words[0]], max_len=max_length)
-            else:
-                pass
+                    next_words = [last_word + ' ' + w + ' ' for w in next_words]
+                else: # Found some last_word continuations bubb : [bubble_tea, bubbles]
+                    print("Word yet to be completed!!")
+                    number_one = possible_words_after_completion[0]
+                    ridiculous_sent_completion = self.autocomplete_list_of_tokens(tokens[:-1] + [number_one], max_len=max_length)
+                    n_got_from_db = min(N_proposed_words, len(possible_words_after_completion))
+                    next_words = [w + ' ' for w in possible_words_after_completion[:n_got_from_db]] + [number_one + ' ' + w + ' ' for w in self.sample_n_next_words(number_one, N=N_proposed_words-n_got_from_db)]
                 
+                print("rid_completion:", ridiculous_sent_completion)
+                print("next_words:", next_words)
+                return ridiculous_sent_completion, next_words
+
+        # Just complete whatever else requested
+        print("Either a FINISHED word with a space afterwards or an UNFINISHED word and no completions available!!!!!")
+        next_words = self.sample_n_next_words(prev_word=last_word, N=N_proposed_words)
+        ridiculous_sent_completion = self.autocomplete_list_of_tokens(tokens + [next_words[0]], max_len=max_length)
+        next_words = [last_word + ' ' + w + ' ' for w in next_words]
+
         print("rid_completion:", ridiculous_sent_completion)
         print("next_words:", next_words)
-        
-
-        # if last_word in db or last_word in words.words():
-        #     # last word is complete
-        #     return sentence + " " + sample_sentence(w0=last_word, max_len=max_length-len(tokens))
-        # else:
-        #     # complete the word if possible and complete sentence with this word
+        return ridiculous_sent_completion, next_words
 
     def __check_prev_word(self, prev_word: str):
         if prev_word not in self.word2idx:

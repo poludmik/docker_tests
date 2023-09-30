@@ -12,7 +12,7 @@ class Data:
 
         self.autocomplete = Autocomplete("src/data/searches.txt")
 
-        print(self.autocomplete.autocomplete_sentence("I want decadent Italia"))
+        print(self.autocomplete.autocomplete_sentence("I want a", max_length=10))
 
     @staticmethod
     def update_keywords_embeddings(docker: bool) -> np.ndarray:

@@ -132,10 +132,13 @@ class Autocomplete:
 
         # User has inserted char that is not a letter (previous word finished)
         if sentence[-1].isalpha():
-            cur = db.conn.cursor()
-            cur.execute(f"SELECT name from filter_parameter WHERE search_tsv @@ to_tsquery('simple', '{last_word}:*');")
-            possible_words_after_completion = list(w[0] for w in cur.fetchall())
-            cur.close()
+
+            possible_words_after_completion = []
+            if "\'" not in last_word and "\"" not in last_word: # db falls...
+                cur = db.conn.cursor()
+                cur.execute(f"SELECT name from filter_parameter WHERE search_tsv @@ to_tsquery('simple', '{last_word}:*');")
+                possible_words_after_completion = list(w[0] for w in cur.fetchall())
+                cur.close()
 
             print("Words from DB:", possible_words_after_completion)
 
@@ -144,12 +147,13 @@ class Autocomplete:
 
             if len(possible_words_after_completion) > 0 or is_in_word2idx:
                 if is_in_word2idx or last_word in possible_words_after_completion or last_word.lower() in possible_words_after_completion: # Finished word, insert ' ' and complete
-                    print("Finished word!")
+                    the_case = "Finished word!"
                     next_words = self.sample_n_next_words(prev_word=last_word, N=N_proposed_words)
-                    ridiculous_sent_completion = self.autocomplete_list_of_tokens(tokens + [next_words[0]], max_len=max_length)
+                    appendix = [] if len(next_words) == 0 else [next_words[0]]
+                    ridiculous_sent_completion = self.autocomplete_list_of_tokens(tokens + appendix, max_len=max_length)
                     next_words = [last_word + ' ' + w + ' ' for w in next_words]
                 else: # Found some last_word continuations bubb : [bubble_tea, bubbles]
-                    print("Word yet to be completed!!")
+                    the_case = "Word yet to be completed!!"
                     number_one = possible_words_after_completion[0]
                     ridiculous_sent_completion = self.autocomplete_list_of_tokens(tokens[:-1] + [number_one], max_len=max_length)
                     n_got_from_db = min(N_proposed_words, len(possible_words_after_completion))
@@ -157,17 +161,19 @@ class Autocomplete:
                 
                 print("rid_completion:", ridiculous_sent_completion)
                 print("next_words:", next_words)
-                return ridiculous_sent_completion, next_words
+                return ridiculous_sent_completion, next_words, the_case
 
         # Just complete whatever else requested
-        print("Either a FINISHED word with a space afterwards or an UNFINISHED word and no completions available!!!!!")
+        the_case = "Either a FINISHED word with a space afterwards or an UNFINISHED word and no completions available!!!!!"
+        
         next_words = self.sample_n_next_words(prev_word=last_word, N=N_proposed_words)
         ridiculous_sent_completion = self.autocomplete_list_of_tokens(tokens + [next_words[0]], max_len=max_length)
         next_words = [last_word + ' ' + w + ' ' for w in next_words]
 
+        print(the_case)
         print("rid_completion:", ridiculous_sent_completion)
         print("next_words:", next_words)
-        return ridiculous_sent_completion, next_words
+        return ridiculous_sent_completion, next_words, the_case
 
     def __check_prev_word(self, prev_word: str):
         if prev_word not in self.word2idx:
@@ -191,8 +197,11 @@ class Autocomplete:
             tokens = ['<s>'] + tokens + ['</s>']
             for i in range(len(tokens)):
                 if tokens[i] not in word2idx:
-                  word2idx[tokens[i]] = len(word2idx)
-                  idx2word[len(idx2word)] = tokens[i]
+                    word2idx[tokens[i]] = len(word2idx)
+                    idx2word[len(idx2word)] = tokens[i]
+                if tokens[i].lower() not in word2idx:
+                    word2idx[tokens[i].lower()] = len(word2idx)
+                    idx2word[len(idx2word)] = tokens[i].lower()
         word2idx["<UNK>"] = len(word2idx)
         idx2word[len(idx2word)] = "<UNK>"
         return word2idx, idx2word
@@ -205,19 +214,25 @@ class Autocomplete:
         if type(text) != list:
             f = open(text)
 
+        def plus_one(token_i, token_next):
+            token = token_i
+            token_next = token_next
+            if token not in word2idx:
+                token = "<UNK>"
+            if token_next not in word2idx:
+                token_next = "<UNK>"
+            count_matrix[word2idx[token], word2idx[token_next]] += 1
+
         for line in f:
             tokens = line.rstrip().split()
             if not tokens:
                 continue
             tokens = ['<s>'] + tokens + ['</s>']
             for i in range(len(tokens) - 1):
-                token = tokens[i]
-                token_next = tokens[i + 1]
-                if token not in word2idx:
-                    token = "<UNK>"
-                if token_next not in word2idx:
-                    token_next = "<UNK>"
-                count_matrix[word2idx[token], word2idx[token_next]] += 1
+                if tokens[i][0].isupper() and i != 0:
+                    plus_one(token_i=tokens[i].lower(), token_next=tokens[i + 1])
+                plus_one(token_i=tokens[i], token_next=tokens[i + 1])
+
         if smoothing:
             count_matrix = count_matrix + 1
         

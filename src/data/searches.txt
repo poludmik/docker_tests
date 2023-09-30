@@ -23,13 +23,13 @@ Today I want to taste Polish pierogi.
 Today I want Turkish saksuka for dinner.
 Today I want to try Arab shakshuka for breakfast.
 Today I want Caucasian manti.
-Today I want a late-night snack - nachos.
-Today I want a healthy diet meal - a vegan salad.
+Today I want a late-night snack nachos.
+Today I want a healthy diet meal a vegan salad.
 Today I want gluten-free pasta at an Italian restaurant.
 Today I want a low-carb dinner with seafood.
 Today I want a vegetarian pizza for lunch.
 Today I want a high-protein burger for dinner.
-Today I want fast-food - a cheeseburger.
+Today I want fast-food a cheeseburger.
 Today I want a refreshing bubble tea.
 Today I want a glass of red wine with my meal.
 Today I want a decadent slice of cheesecake.
@@ -99,4 +99,105 @@ Today, I'm dreaming of a platter of fresh oysters with lemon and hot sauce.
 I'm in the mood for a spicy Mexican street taco with all the toppings.
 I wish I could enjoy a plate of authentic dim sum at a bustling Chinese restaurant.
 Today I'd like bubble-tea from mango and bread in a bar
-Today I'd want bubble-tea to burst into flames
+Today I'd want bubble-tea to burst into flames for lunch in a restaurant
+Today I want Asian fusion dishes at a cozy restaurant.
+Today I want authentic Japanese udon noodles.
+Today I want to satisfy my craving for dumplings.
+Today I want a steaming bowl of Vietnamese pho.
+Today I want to explore a Japanese sushi bar.
+Today I want to indulge in fresh nigiri sushi.
+Today I want spicy Thai curry for dinner.
+Today I want to try Uzbek plov at a restaurant.
+Today I want to experience Indian curry.
+Today I want Czech comfort food svickova.
+Today I want to enjoy German bratwurst.
+Today I want a classic English breakfast.
+Today I want a flaky French croissant.
+Today I want a bagel with cream cheese.
+Today I want Spanish paella by the sea.
+Today I want chilled gazpacho for lunch.
+Today I want authentic Italian pasta.
+Today I want a pizza with quattro formaggi.
+Today I want a fresh caprese salad.
+Today I want a spicy pepperoni pizza.
+Today I want Swedish meatballs for dinner.
+Today I want to try crayfish in a cozy cafe.
+Today I want Scandinavian knackebrod.
+Today I want Ukrainian borscht for lunch.
+Today I want to taste authentic pierogi.
+Today I want Polish golabki for dinner.
+Today I want to savor manti at a restaurant.
+Today I want Georgian khinkali dumplings.
+Today I want a hearty breakfast at a bistro.
+Today I want a quick and delicious lunch.
+Today I want a candlelit dinner at a restaurant.
+Today I want a late-night snack at a food truck.
+Today I want a diet-friendly meal for lunch.
+Today I want halal options for dinner.
+Today I want kosher cuisine in a cozy cafe.
+Today I want a raw food experience for lunch.
+Today I want diabetic-friendly options for dinner.
+Today I want a vegan feast at a vegetarian restaurant.
+Today I want gluten-free pasta for lunch.
+Today I want a low-carb dinner with seafood.
+Today I want a low-fat meal at a pizzeria.
+Today I want a high-protein breakfast.
+Today I want a pescatarian dinner by the sea.
+Today I want fast food a cheeseburger.
+Today I want crispy chicken nuggets.
+Today I want a taco with all the toppings.
+Today I want a classic hot-dog for lunch.
+Today I want a juicy burger with fries.
+Today I want a burrito stuffed with goodness.
+Today I want a kebab with all the fixings.
+Today I want a cozy Asian bistro with mouthwatering udon noodles.
+Today I would like a cozy Asian restaurant with delicious udon noodles.
+Craving some steaming dumplings at a Vietnamese food truck.
+I need a hearty bowl of pho from a nearby Japanese eatery.
+Take me to a sushi bar for some mouthwatering nigiri.
+Looking for a Thai restaurant with authentic curry dishes.
+Let's find an Uzbek place serving aromatic plov.
+In the mood for spicy Indian curry at a local bistro.
+Today I would like Czech svickova in a charming pub.
+I want to savor a traditional German bratwurst.
+How about an English breakfast at a cozy cafe
+I'm craving a buttery croissant at a French bakery.
+Searching for a bagel shop with a variety of toppings.
+A Spanish restaurant for some paella and gazpacho, please!
+Bring me to an Italian trattoria for spaghetti and pizza.
+I need a pizza fix, especially quattro formaggi.
+Take me to a cute cafe for a classic Italian caprese salad.
+I want a spicy pepperoni pizza from a local pizzeria.
+Craving a Swedish meatball dinner tonight.
+Let's indulge in crayfish at a Scandinavian restaurant.
+Today I would like to eat knackebrod with borscht.
+Seeking a Ukrainian restaurant for varenyky and holubci.
+I want to try some traditional Polish pierogi.
+Take me to a Georgian spot for delicious khinkali.
+In the mood for a hearty Czech gulas at a pub.
+I need a breakfast place that serves rosolnyk.
+How about some golabki from a Polish eatery
+Let's go for some Turkish manti or a doner kebab.
+Craving a late-night snack at a local food truck.
+Looking for a diet-friendly meal at a halal restaurant.
+Today I would like to try kosher cuisine for lunch.
+I want a raw vegan meal at a vegetarian cafeteria.
+Find me a gluten-free dinner option at a bistro.
+I need a low-carb, high-protein dish for lunch.
+Take me to a seafood restaurant for some shrimp.
+How about a fish dinner with salmon and carp
+I'm craving fresh fruits like apples for breakfast.
+Let's grab a cheeseburger from a fast-food joint.
+Searching for some crispy chicken nuggets.
+I want a delicious taco from a Mexican food truck.
+Take me to a hot-dog stand for a classic snack.
+Craving a juicy burger at a local pub.
+Let's find a burrito place for a satisfying meal.
+In the mood for a Turkish durum wrap.
+I need a refreshing beverage maybe some bubble tea
+Take me to a cafe for a strong cup of coffee.
+How about trying some local craft beer at a brewery
+I want a slice of cake from a dessert shop.
+Let's indulge in a creamy cheesecake for dessert.
+Today I would like to enjoy some ice cream flavors.
+Searching for a cozy restaurant serving delicious soup.

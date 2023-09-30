@@ -43,6 +43,24 @@ def extract_keywords():
         return jsonify({'error': str(e)}), 500
 
 
+@app.route('/autocomplete', methods=['GET'])
+def autocomplete():
+
+    try:
+        sentence = request.args.get('sentence')
+        max_len = int(request.args.get('max_len')) if request.args.get('max_len') is not None else 10
+        max_proposals = int(request.args.get('max_proposals')) if request.args.get('max_proposals') is not None else 5
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+    try:
+        ridiculous_sentence, next_words, the_case = data.autocomplete.autocomplete_sentence(sentence, max_length=max_len, N_proposed_words=max_proposals)
+        return jsonify({"lol": ridiculous_sentence, "kek": next_words, "situation": the_case})
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 # Close connection to DB on:
 signal.signal(signal.SIGTERM, db.DBconnection.close_db_docker) # docker stop
 signal.signal(signal.SIGHUP, db.DBconnection.close_db_docker) # terminal closed

@@ -11,8 +11,7 @@ class Data:
         # print(f"Total of {self.keywords_embeddings.shape[0]} filters")
 
         self.autocomplete = Autocomplete("src/data/searches.txt")
-
-        print(self.autocomplete.autocomplete_sentence("I want a", max_length=10))
+        # print(self.autocomplete.autocomplete_sentence("today I want Italian pizza for lunch", max_length=10))
 
     @staticmethod
     def update_keywords_embeddings(docker: bool) -> np.ndarray:

@@ -1,3 +1,8 @@
+## To run this python module:
+```
+python3 -m src
+```
+
 ## Use CUDA in docker container
 
 * Enable WSL based engine in Docker Desktop

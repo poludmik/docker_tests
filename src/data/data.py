@@ -12,12 +12,14 @@ class Data:
 
         self.autocomplete = Autocomplete("src/data/searches.txt")
 
+        print(self.autocomplete.autocomplete_sentence("I want decadent Italia"))
+
     @staticmethod
     def update_keywords_embeddings(docker: bool) -> np.ndarray:
         cur = db.conn.cursor()
         cur.execute("SELECT name FROM filter_parameter")
         filters_list = [f[0] for f in list(cur.fetchall())]
-        print(filters_list)
+        # print(filters_list)
         cur.close()
         model = Embeddings()
         return np.array(filters_list), np.array([model.get_sentence_embedding(f) for f in filters_list])

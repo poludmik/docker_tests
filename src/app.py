@@ -7,12 +7,6 @@ import signal
 
 app = Flask(__name__)
 
-def check_data():
-    global data
-    if data is None:
-        data = Data()
-    return data
-
 
 @app.route('/process_string', methods=['GET'])
 def process_string():
@@ -32,7 +26,7 @@ def process_string():
 @app.route('/extract_keywords', methods=['GET'])
 def extract_keywords():
     try:
-        data = check_data()
+        global data
 
         received_data = request.get_json()
 
@@ -51,13 +45,15 @@ def extract_keywords():
 
 # Close connection to DB on:
 signal.signal(signal.SIGTERM, db.DBconnection.close_db_docker) # docker stop
-# signal.signal(signal.SIGHUP, db.DBconnection.close_db_docker)
-signal.signal(signal.SIGINT, db.DBconnection.close_db_docker) # CTRL+C
+signal.signal(signal.SIGHUP, db.DBconnection.close_db_docker) # terminal closed
+signal.signal(signal.SIGINT, db.DBconnection.close_db_docker) # CTRL+C (works also in docker, see container logs)
 
 
 def start():
-    global data
-    data = None
     db.DBconnection.connect()
+
+    global data
+    data = Data()
+    
     app.run(host='0.0.0.0', port=5000, debug=False)
 

@@ -63,11 +63,8 @@ class ProcessSearch():
         words += ngram_list
 
         w_embs = np.array([ProcessSearch.model.get_sentence_embedding(t) for t in words])
-        print(w_embs.shape)
-        print(data.keywords_embeddings.T.shape)
         sim_threshold = 0.88
         multiplied = w_embs @ data.keywords_embeddings.T
-        print(multiplied.shape)
 
         # # Only for logs and tests. What query words were selected.
         # idxs_request_similarity = np.max(multiplied, axis=1) >= sim_threshold

@@ -26,17 +26,15 @@ def process_string():
 @app.route('/extract_keywords', methods=['GET'])
 def extract_keywords():
     try:
+        sentence = request.args.get('user_request')
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+    try:
         global data
-
-        received_data = request.get_json()
-
-        if 'user_request' not in received_data:
-            return jsonify({'error': 'Missing user_request string in the request'}), 400
-
-        print(received_data['user_request'])
-        filters, filters_to_exclude = ProcessSearch.get_keywords(received_data['user_request'], data)
+        print(sentence)
+        filters, filters_to_exclude = ProcessSearch.get_keywords(sentence, data)
         response_data = {"filters": filters, "filters_to_exclude": filters_to_exclude}
-
         return jsonify(response_data)
     
     except Exception as e:

@@ -1,0 +1,21 @@
+services:
+  python_misha:
+    container_name: python_misha
+    ports:
+      - "5000:5000"
+    build:
+      dockerfile: macos.Dockerfile
+    networks:
+      - python-network
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #       - driver: nvidia
+    #         count: 1
+    #         capabilities: [gpu]
+
+networks:
+  python-network:
+    name: backend_network
+    external: true

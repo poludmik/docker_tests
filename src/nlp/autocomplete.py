@@ -136,7 +136,7 @@ class Autocomplete:
             possible_words_after_completion = []
             if "\'" not in last_word and "\"" not in last_word: # db falls...
                 cur = db.conn.cursor()
-                cur.execute(f"SELECT name from filter_parameter WHERE search_tsv @@ to_tsquery('simple', '{last_word}:*');")
+                cur.execute(f"SELECT name from filter_parameter WHERE (search_tsv @@ to_tsquery('simple', '{last_word}:*')) AND starts_with(name, '{last_word}');")
                 possible_words_after_completion = list(w[0] for w in cur.fetchall())
                 cur.close()
 
